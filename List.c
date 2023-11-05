@@ -156,25 +156,39 @@ bool deleteToBefore(list *xs){
 // with the item originally succeeding the current item. The current item stays the same.
 // A list with no item selected will not be changed by this function.
 void reform(list *xs) {
+	if( xs->none == xs->current ) return;
+	int a[1000], n = 0;
 	list* newlist = newList(-1);
 	node* itr = xs->current->next;
 	while( itr != xs->none ) {
-		insertAfter(newlist, itr->x);
+		a[n++] = itr->x;
 		itr = itr->next;
 	}
 	itr = xs->none->next;
 	while( itr != xs->current->next ) {
-		insertAfter(newlist, itr->x);
+		a[n++] = itr->x;
 		itr = itr->next;
 	}
 	
-	xs = newlist;	
-	puts("----------------");
-	for( node* itr = xs->none->next; itr != xs->none; itr = itr->next ) {
-		if( itr == xs->current ) printf("|");
-		printf("%d", itr->x);
+	itr = xs->none->next;
+	n = 0;
+	while( itr != xs->none ) {
+		itr->x = a[n++];
+		itr = itr->next;
 	}
-	puts("\n-------------");
+	xs->current = xs->none->back;
+	
+	//xs = NULL;
+	//xs->none = newlist->none;
+	//xs->current = newlist->current;
+	xs = newlist;
+	
+	//puts("----------------");
+	for( node* itr = xs->none->next; itr != xs->none; itr = itr->next ) {
+	//	if( itr == xs->current ) printf("|");
+	//	printf("%d", itr->x);
+	}
+	//puts("\n-------------");
 }
 
 
@@ -224,7 +238,7 @@ void destroy(list *xs, char *s) {
 // Note: You do not need to understand this function to solve the coursework.
 bool match(list *xs, char *s) {
 	if( isReform ) {
-		printf("[%s]\n");
+		//printf("[%s]\n");
 	}
   int n = strlen(s);
   node *nodes[n];
@@ -235,24 +249,25 @@ bool match(list *xs, char *s) {
       if (nodes[i]->back != nodes[i - 1]) return false;
     }
     
-    puts("Hi, this!");
+    //puts("Hi, this!");
   node *p = xs->none->next;
+  
   for (int i = 0; i < strlen(s); i++) {
     if (s[i] == '|') {
       if (p != xs->current) {
-      	puts("Hi, I am here\t1");
+      	//puts("Hi, I am here\t1");
 	  	return false;
 	  }
     }
     else {
       if (p->x != s[i] - '0'){
-      	printf("\t\t%d %d %d\n", i, p->x, s[i] - '0');
+      	//printf("\t\t%d %d %d\t\t%d\n", i, p->x, s[i] - '0', xs->none->next->x);
 	  	return false;
 	  }
       p = p->next;
     }
   }
-  puts("Hi, that!");
+  //puts("Hi, that!");
   return true;
 }
 
@@ -299,10 +314,12 @@ bool check(function f, int in, char *before, char *after, int out) {
   assert(__LINE__, (xs->none == xs->none->next->back));
   assert(__LINE__, (xs->none == xs->none->back->next));
   //check that your function works correctly as the tests demand
-  
+  if( isReform == true ) {
+  	//printf("~~~~~~~~%d\n", xs->none->next->x);
+  }
   bool ok1 = match(xs, after);
   bool ok2 = (result == out);
-  printf("%s\t%s\t%d\t%d\n", before, after, ok1, ok2);
+  //printf("%s\t%s\t%d\t%d\n", before, after, ok1, ok2);
   bool ok = ok1 && ok2;
   destroy(xs, after);
   return ok;
@@ -403,8 +420,10 @@ void testDeleteToBefore() {
 
 void testReform() {
 	isReform = true;
+	
     assert(__LINE__, check(Reform, -1, "|", "|", -1));
     assert(__LINE__, check(Reform, -1, "|37", "7|3", -1));
+    
     assert(__LINE__, check(Reform, -1, "3|7", "3|7", -1));
     assert(__LINE__, check(Reform, -1, "37|", "37|", -1));
 }
