@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+bool isReform = false;
 // Each node in a doubly linked list is stored in this structure. The user of the
 // module does not have any knowledge of nodes.
 struct node { struct node *back; item x; struct node *next; };
@@ -21,6 +22,176 @@ typedef struct list list;
 
 // ---------- ADD YOUR 14 FUNCTIONS HERE TO SOLVE THE COURSEWORK ----------
 
+// FUNCTION #1: Create a new empty list and make e the default item that is
+// returned by functions in case no item is selected. No item is selected in an empty list.
+list *newList(item e){
+	list* ret = malloc(sizeof(list));
+	node* none = malloc(sizeof(node));
+	node* current = malloc(sizeof(node));
+	none->back = none;
+	none->next = none;
+	none->x = e;
+	current = none;
+	ret->none = none;
+	ret->current = current;
+	return ret;
+}
+
+// FUNCTION #2: Free up the list and all the data in it. Does not have to run in O(1).
+void freeList(list *xs){
+	
+}
+
+// FUNCTIONS #3/#4: Set the current item to the first item or to the last
+// item of the list, respectively. If the list has no items the functions do nothing
+// and no item is selected.
+void first(list *xs){
+	if( xs->none == xs->none->next ) return;
+	xs->current = xs->none->next;
+}
+void last(list *xs){
+	if( xs->none == xs->none->next ) return;
+	xs->current = xs->none->back;
+}
+
+// FUNCTION #5: Returns true if no item is selected, i.e. the 'none' position.
+// Otherwise it returns false.
+bool none(list *xs){
+	if( xs->current == xs->none ) return true;
+	return false;
+}
+
+// FUNCTION #6: Make the item following the currently selected item the current item
+// and return true. If after is called while the last item is the current item, then no item is
+// selected and true is returned. If the function is called while no item
+// is selected then the function does nothing and returns false.
+bool after(list *xs){
+	if( xs->current == xs->none ) return false;
+	xs->current = xs->current->next;
+	return true;
+}
+
+// FUNCTION #7: Make the item before the currently selected item the current item and return true.
+// If before is called while the first item is the current item, then no item is
+// selected and true is returned. If the function is called while no item
+// is selected then the function does nothing and returns false.
+bool before(list *xs) {
+	if( xs->current == xs->none ) return false;
+	xs->current = xs->current->back;
+	return true;
+}
+
+// FUNCTION #8: Get the current item. If get is called and no item is selected
+// then the default item is returned.
+item get(list *xs){
+	return xs->current->x;
+}
+
+// FUNCTION #9: Set the current item and return true. If set is called while no
+// item is selected then the function does nothing and returns false.
+bool set(list *xs, item x){
+	if( xs->current == xs->none ) return false;
+	xs->current->x = x;
+	return true;
+}
+
+// FUNCTION #10: Inserts an item after the current item and makes it the current item.
+// If insertAfter is called while no item is selected then
+// the function inserts the item at the beginning of the list
+// before the first item.
+void insertAfter(list *xs, item x){
+	node* newNode = malloc(sizeof(node));
+	newNode->x = x;
+	newNode->next = xs->current->next;
+	newNode->back = xs->current;
+	newNode->next->back = newNode;
+	xs->current->next = newNode;
+	xs->current = newNode;
+}
+
+// FUNCTION #11: Inserts an item before the current item and makes it the current item.
+// If insertAfter is called while no item is selected then the function inserts
+// the item at the end of the list after the last item.
+void insertBefore(list *xs, item x){
+	node* newNode = malloc(sizeof(node));
+	newNode->x = x;
+	newNode->next = xs->current;
+	newNode->back = xs->current->back;
+	newNode->back->next = newNode;
+	xs->current->back = newNode;
+	xs->current = newNode;
+}
+
+// FUNCTION #12: Delete the current item and make its successor the current item, then
+// return true. If deleteToAfter is called while the last item is the current item then
+// the last item is deleted, no item is selected, and true is returned.
+// If deleteToAfter is called while no item is selected then the
+// function does nothing and returns false.
+bool deleteToAfter(list *xs){
+	if( xs->current == xs->none ) return false;
+	node* delNode = xs->current;
+	xs->current->back->next = xs->current->next;
+	xs->current->next->back = xs->current->back;
+	xs->current = xs->current->next;
+	free(delNode);
+}
+
+// FUNCTION #13: Delete the current item and make its predecessor the current item, then
+// return true. If deleteToBefore is called while the first item is the current item then
+// the first item is deleted, no item is selected, and true is returned.
+// If deleteToBefore is called while no item is selected then the
+// function does nothing and returns false.
+bool deleteToBefore(list *xs){
+	if( xs->current == xs->none ) return false;
+	node* delNode = xs->current;
+	xs->current->back->next = xs->current->next;
+	xs->current->next->back = xs->current->back;
+	xs->current = xs->current->back;
+	free(delNode);
+}
+
+// FUNCTION #14: Reform the list by making the list end with the current item whilst
+// preserving the sequence of all list items. The current item and items originally before 
+// the current item will then be at the end of the reformed list. The reformed list will start
+// with the item originally succeeding the current item. The current item stays the same.
+// A list with no item selected will not be changed by this function.
+void reform(list *xs) {
+	if( xs->none == xs->current ) return;
+	int a[1000], n = 0;
+	list* newlist = newList(-1);
+	node* itr = xs->current->next;
+	while( itr != xs->none ) {
+		a[n++] = itr->x;
+		itr = itr->next;
+	}
+	itr = xs->none->next;
+	while( itr != xs->current->next ) {
+		a[n++] = itr->x;
+		itr = itr->next;
+	}
+	
+	itr = xs->none->next;
+	n = 0;
+	while( itr != xs->none ) {
+		itr->x = a[n++];
+		itr = itr->next;
+	}
+	xs->current = xs->none->back;
+	
+	//xs = NULL;
+	//xs->none = newlist->none;
+	//xs->current = newlist->current;
+	xs = newlist;
+	
+	//puts("----------------");
+	for( node* itr = xs->none->next; itr != xs->none; itr = itr->next ) {
+	//	if( itr == xs->current ) printf("|");
+	//	printf("%d", itr->x);
+	}
+	//puts("\n-------------");
+}
+
+
 // Test the list module, using int as the item type. Strings are used as
 // 'pictograms' to describe lists. Single digits represent items and the '|' symbol
 // in front of a digit indicates that this is the current item. If the '|' symbol
@@ -28,7 +199,7 @@ typedef struct list list;
 // "|37", "3|7", "37|" represent a list of two items, with the current position
 // at the first item, the last item, and a situation where 'none' of the items
 // is selected.
-#ifdef test_list
+//#ifdef test_list
 
 // Build a list from a pictogram, with -1 as the default item.
 // Note: You do not need to understand this function to solve the coursework.
@@ -66,6 +237,9 @@ void destroy(list *xs, char *s) {
 // Check that a list matches a pictogram.
 // Note: You do not need to understand this function to solve the coursework.
 bool match(list *xs, char *s) {
+	if( isReform ) {
+		//printf("[%s]\n");
+	}
   int n = strlen(s);
   node *nodes[n];
   nodes[0] = xs->none;
@@ -74,16 +248,26 @@ bool match(list *xs, char *s) {
     for (int i = 1; i < n; i++) {
       if (nodes[i]->back != nodes[i - 1]) return false;
     }
+    
+    //puts("Hi, this!");
   node *p = xs->none->next;
+  
   for (int i = 0; i < strlen(s); i++) {
     if (s[i] == '|') {
-      if (p != xs->current) return false;
+      if (p != xs->current) {
+      	//puts("Hi, I am here\t1");
+	  	return false;
+	  }
     }
     else {
-      if (p->x != s[i] - '0') return false;
+      if (p->x != s[i] - '0'){
+      	//printf("\t\t%d %d %d\t\t%d\n", i, p->x, s[i] - '0', xs->none->next->x);
+	  	return false;
+	  }
       p = p->next;
     }
   }
+  //puts("Hi, that!");
   return true;
 }
 
@@ -130,7 +314,13 @@ bool check(function f, int in, char *before, char *after, int out) {
   assert(__LINE__, (xs->none == xs->none->next->back));
   assert(__LINE__, (xs->none == xs->none->back->next));
   //check that your function works correctly as the tests demand
-  bool ok = (match(xs, after) && (result == out));
+  if( isReform == true ) {
+  	//printf("~~~~~~~~%d\n", xs->none->next->x);
+  }
+  bool ok1 = match(xs, after);
+  bool ok2 = (result == out);
+  //printf("%s\t%s\t%d\t%d\n", before, after, ok1, ok2);
+  bool ok = ok1 && ok2;
   destroy(xs, after);
   return ok;
 }
@@ -229,8 +419,11 @@ void testDeleteToBefore() {
 }
 
 void testReform() {
+	isReform = true;
+	
     assert(__LINE__, check(Reform, -1, "|", "|", -1));
     assert(__LINE__, check(Reform, -1, "|37", "7|3", -1));
+    
     assert(__LINE__, check(Reform, -1, "3|7", "3|7", -1));
     assert(__LINE__, check(Reform, -1, "37|", "37|", -1));
 }
@@ -252,4 +445,4 @@ int main() {
     printf("List module tests run OK.\n");
     return 0;
 }
-#endif
+//#endif
