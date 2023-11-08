@@ -330,7 +330,7 @@ bool check(function f, int in, char *before, char *after, int out) {
 // Test newList, and call freeList. The test for freeList is that the memory
 // leak detector in the -fsanitize=address or -fsanitize=leak compiler option
 // reports no problems.
-void testNewList() {
+void testNewList(void) {
     list *xs = newList(-1);
     //check circular list structure
     assert(__LINE__, (xs->none == xs->none->next));
@@ -341,70 +341,70 @@ void testNewList() {
 }
 
 // Test the various 14 functions.
-void testFirst() {
+void testFirst(void) {
     assert(__LINE__, check(First, -1, "|", "|", -1));
     assert(__LINE__, check(First, -1, "|37", "|37", -1));
     assert(__LINE__, check(First, -1, "3|7", "|37", -1));
     assert(__LINE__, check(First, -1, "37|", "|37", -1));
 }
 
-void testLast() {
+void testLast(void) {
     assert(__LINE__, check(Last, -1, "|", "|", -1));
     assert(__LINE__, check(Last, -1, "|37", "3|7", -1));
     assert(__LINE__, check(Last, -1, "3|7", "3|7", -1));
     assert(__LINE__, check(Last, -1, "37|", "3|7", -1));
 }
 
-void testNone() {
+void testNone(void) {
     assert(__LINE__, check(None, -1, "|", "|", true));
     assert(__LINE__, check(None, -1, "|37", "|37", false));
     assert(__LINE__, check(None, -1, "3|7", "3|7", false));
     assert(__LINE__, check(None, -1, "37|", "37|", true));
 }
 
-void testAfter() {
+void testAfter(void) {
     assert(__LINE__, check(After, -1, "|", "|", false));
     assert(__LINE__, check(After, -1, "|37", "3|7", true));
     assert(__LINE__, check(After, -1, "3|7", "37|", true));
     assert(__LINE__, check(After, -1, "37|", "37|", false));
 }
 
-void testBefore() {
+void testBefore(void) {
     assert(__LINE__, check(Before, -1, "|", "|", false));
     assert(__LINE__, check(Before, -1, "|37", "37|", true));
     assert(__LINE__, check(Before, -1, "3|7", "|37", true));
     assert(__LINE__, check(Before, -1, "37|", "37|", false));
 }
 
-void testGet() {
+void testGet(void) {
     assert(__LINE__, check(Get, -1, "|", "|", -1));
     assert(__LINE__, check(Get, -1, "|37", "|37", 3));
     assert(__LINE__, check(Get, -1, "3|7", "3|7", 7));
     assert(__LINE__, check(Get, -1, "37|", "37|", -1));
 }
 
-void testSet() {
+void testSet(void) {
     assert(__LINE__, check(Set, 5, "|", "|", false));
     assert(__LINE__, check(Set, 5, "|37", "|57", true));
     assert(__LINE__, check(Set, 5, "3|7", "3|5", true));
     assert(__LINE__, check(Set, 5, "37|", "37|", false));
 }
 
-void testInsertAfter() {
+void testInsertAfter(void) {
     assert(__LINE__, check(InsertAfter, 5, "|", "|5", -1));
     assert(__LINE__, check(InsertAfter, 5, "|37", "3|57", -1));
     assert(__LINE__, check(InsertAfter, 5, "3|7", "37|5", -1));
     assert(__LINE__, check(InsertAfter, 5, "37|", "|537", -1));
 }
 
-void testInsertBefore() {
+void testInsertBefore(void) {
     assert(__LINE__, check(InsertBefore, 5, "|", "|5", -1));
     assert(__LINE__, check(InsertBefore, 5, "|37", "|537", -1));
     assert(__LINE__, check(InsertBefore, 5, "3|7", "3|57", -1));
     assert(__LINE__, check(InsertBefore, 5, "37|", "37|5", -1));
 }
 
-void testDeleteToAfter() {
+void testDeleteToAfter(void) {
     assert(__LINE__, check(DeleteToAfter, -1, "|", "|", false));
     assert(__LINE__, check(DeleteToAfter, -1, "|37", "|7", true));
     assert(__LINE__, check(DeleteToAfter, -1, "3|7", "3|", true));
@@ -412,7 +412,7 @@ void testDeleteToAfter() {
     assert(__LINE__, check(DeleteToAfter, -1, "|5", "|", true));
 }
 
-void testDeleteToBefore() {
+void testDeleteToBefore(void) {
     assert(__LINE__, check(DeleteToBefore, -1, "|", "|", false));
     assert(__LINE__, check(DeleteToBefore, -1, "|37", "7|", true));
     assert(__LINE__, check(DeleteToBefore, -1, "3|7", "|3", true));
@@ -420,7 +420,7 @@ void testDeleteToBefore() {
     assert(__LINE__, check(DeleteToBefore, -1, "|5", "|", true));
 }
 
-void testReform() {
+void testReform(void) {
 	isReform = true;
 	
     assert(__LINE__, check(Reform, -1, "|", "|", -1));
