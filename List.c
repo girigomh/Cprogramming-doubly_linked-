@@ -134,6 +134,7 @@ bool deleteToAfter(list *xs){
 	xs->current->next->back = xs->current->back;
 	xs->current = xs->current->next;
 	free(delNode);
+	return true;
 }
 
 // FUNCTION #13: Delete the current item and make its predecessor the current item, then
@@ -148,6 +149,7 @@ bool deleteToBefore(list *xs){
 	xs->current->next->back = xs->current->back;
 	xs->current = xs->current->back;
 	free(delNode);
+	return true;
 }
 
 // FUNCTION #14: Reform the list by making the list end with the current item whilst
