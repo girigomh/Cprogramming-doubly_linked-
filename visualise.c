@@ -9,19 +9,19 @@ const int length[] = {8, 32, 64, 64, 8, 32};
 
 char* itos(int value) {
 	char* ret = malloc(sizeof(char) * 100);
-	itoa(value, ret, 10);
+	snprintf(ret, 50, "%d", value);
 	return ret;
 }
 
 char* ltos(long long value) {
 	char* ret = malloc(sizeof(char) * 100);
-	_i64toa(value, ret, 10);
+	snprintf(ret, 50, "%lld", value);
 	return ret;
 }
 
 char* ftos(double value) {
 	char* ret = malloc(sizeof(char) * 100);
-	sprintf(ret, "%g", value);	
+	snprintf(ret, 50, "%g", value);	
 	return ret;
 }
 
@@ -34,7 +34,6 @@ void print_bin(long long value, int data_type) {
 		printf("%d", s[ -- j ]);
 		if( i % 4 == 3 ) printf(" ");
 	}
-	//puts("");
 }
 union myUnion {
     double dValue;
@@ -47,7 +46,6 @@ void print_double_bin(double value, int data_type) {
 	union myUnion myValue;
 	myValue.dValue = value;
 	long long val = myValue.lValue;
-	//printf("DB = %g\t%ld\t[%d,%d]\n", value, val,sizeof(double), sizeof(long long));
 	for( int i = 0; i < length[data_type]; i ++ )
 		s[ j ++ ] = val & 1, val = val >> 1;
 	for( int i = 0; i < length[data_type]; i ++ ) {
@@ -56,11 +54,9 @@ void print_double_bin(double value, int data_type) {
 	}
 }
 int Data2Bin(int index, char* data) {
-	char charValue;
 	int intValue;
 	long long longValue;
 	double doubleValue;
-	int i;
 	
 	switch( index ) {
 		case 0:
@@ -75,7 +71,7 @@ int Data2Bin(int index, char* data) {
 			print_bin(intValue, 1);
 			break;
 		case 2:
-			longValue = _atoi64(data);
+			sscanf(data, "%lld", &longValue);
 			if( strcmp(data, ltos(longValue)) != 0 ) return 0;
 			print_bin(longValue, 2);
 			break;
@@ -91,7 +87,7 @@ int Data2Bin(int index, char* data) {
 			print_bin(intValue, 4);
 			break;
 		case 5:
-			longValue = _atoi64(data);
+			sscanf(data, "%lld", &longValue);
 			if( strcmp(data, ltos(longValue)) != 0 ) return 0;
 			if( longValue < 0 || longValue >= ( 1LL << 32 )) return 0;
 			print_bin(longValue, 5);
@@ -120,7 +116,6 @@ int Bin2Data(int index, int from, int n, char* data[]) {
 	union myUnion myValue;
 	switch( index ) {
 		case 0:
-	//		if( value < -128 || value > 127 ) return 0;
 			printf("%d", (char)(value & 0xFF));
 			break;
 		case 1:
@@ -135,11 +130,11 @@ int Bin2Data(int index, int from, int n, char* data[]) {
 			break;
 		case 4:
 			if( value < 0 || value > 255 ) return 0;
-			printf("%d",value & 0xFF);
+			printf("%lld",value & 0xFF);
 			break;
 		case 5:
 			if( value < 0 || value >= ( 1LL << 32 )) return 0;
-			printf("%d",value & 0xFFFFFFFF);
+			printf("%lld",value & 0xFFFFFFFF);
 			break;
 	}
 	return 1;
@@ -147,7 +142,7 @@ int Bin2Data(int index, int from, int n, char* data[]) {
 int main(int argc, char* argv[]) {
 	if( argc == 1 ) {
 		printf("All tests pass.\n");
-		return;
+		return 0;
 	}
 	int index = 1;
 	int dataTypeIndex = -1;
@@ -173,10 +168,8 @@ int main(int argc, char* argv[]) {
 		for( int k = 0; str[k]; k ++)
 			if( str[k] == ';' ) typeCount ++;
 		int direction = argc - index == typeCount;
-	//	printf("%d %d %d\n", argc - index, typeCount, direction);
 		p = strtok(str, ";");
 		while( p ) {
-			//puts(p);
 			if( strncmp(p, "char", 4) == 0 ) dataTypeIndex = 0;
 			else if( strncmp(p, "int", 3) == 0 ) dataTypeIndex = 1;
 			else if( strncmp(p, "long", 4) == 0 ) dataTypeIndex = 2;
@@ -195,7 +188,7 @@ int main(int argc, char* argv[]) {
 			}
 			p = strtok(NULL, ";");
 		}		
-		return;
+		return 0;
 	}
 	if( dataTypeIndex < 0 ) {
 		puts("Input error.");
